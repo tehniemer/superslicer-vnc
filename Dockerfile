@@ -6,7 +6,7 @@ LABEL authors="vajonam, Michael Helfrich - helfrichmichael"
 
 ARG VIRTUALGL_VERSION=3.1.1-20240228
 ARG TURBOVNC_VERSION=3.1.1-20240127
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install some basic dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -67,7 +67,7 @@ RUN openssl req -x509 -nodes -newkey rsa:2048 -keyout /etc/novnc.pem -out /etc/n
     && rm /etc/xdg/autostart/lxpolkit.desktop \
     && mv /usr/bin/lxpolkit /usr/bin/lxpolkit.ORIG
 
-ENV PATH ${PATH}:/opt/VirtualGL/bin:/opt/TurboVNC/bin
+ENV PATH=${PATH}:/opt/VirtualGL/bin:/opt/TurboVNC/bin
 
 ADD entrypoint.sh /entrypoint.sh
 ADD supervisord.conf /etc/
