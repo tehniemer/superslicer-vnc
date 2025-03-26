@@ -38,7 +38,12 @@ RUN wget -qO /tmp/virtualgl_${VIRTUALGL_VERSION}_amd64.deb https://packagecloud.
 # Install Superslicer.
 WORKDIR /slic3r
 ADD get_latest_superslicer_release.sh /slic3r
-RUN chmod +x /slic3r/get_latest_superslicer_release.sh \
+RUN mkdir -p /slic3r/ \
+  && mkdir -p /prints/ \
+  && mkdir -p /home/slic3r/.config/ \
+  && mkdir -p /configs/.config/ \
+  && mkdir /configs/.local/ \
+  && chmod +x /slic3r/get_latest_superslicer_release.sh \
   && latestSlic3r=$(/slic3r/get_latest_superslicer_release.sh url) \
   && slic3rReleaseName=$(/slic3r/get_latest_superslicer_release.sh name) \
   && curl -sSL ${latestSlic3r} > ${slic3rReleaseName} \
@@ -49,17 +54,10 @@ RUN chmod +x /slic3r/get_latest_superslicer_release.sh \
   && rm -rf /var/lib/apt/lists/* \
   && apt-get autoclean \
   && groupadd slic3r \
-  && mkdir -p /home/slic3r \
   && useradd -g slic3r --create-home --home-dir /home/slic3r slic3r \
-  && mkdir -p /slic3r \
-  && mkdir -p /configs \
-  && mkdir -p /prints/ \
   && chown -R slic3r:slic3r /slic3r/ /home/slic3r/ /prints/ /configs/ \
   && locale-gen en_US \
-  && mkdir /configs/.local \
-  && mkdir -p /configs/.config/ \
   && ln -s /configs/.config/ /home/slic3r/ \
-  && mkdir -p /home/slic3r/.config/ \
   && echo "XDG_DOWNLOAD_DIR=\"/prints/\"" >> /home/slic3r/.config/user-dirs.dirs \
   && echo "file:///prints prints" >> /home/slic3r/.gtk-bookmarks
 
