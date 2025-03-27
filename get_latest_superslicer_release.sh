@@ -24,8 +24,6 @@ fi
 
 TMPDIR="$(mktemp -d)"
 
-curl -SsL https://api.github.com/repos/supermerill/SuperSlicer/releases/latest > $TMPDIR/latest.json
-
 if [[ ! -e "$TMPDIR/latestReleaseInfo.json" ]]; then
 
   curl -SsL https://api.github.com/repos/supermerill/SuperSlicer/releases/latest > $TMPDIR/latestReleaseInfo.json
