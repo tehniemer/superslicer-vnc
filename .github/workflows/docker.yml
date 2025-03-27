@@ -8,7 +8,6 @@ name: Publish to ghcr.io
 on:
   workflow_dispatch:
   push:
-    branches: [ "main" ]
     # Publish semver tags as releases.
     tags: [ '*' ]
 
