@@ -1,4 +1,26 @@
 #!/bin/bash
+# Get the latest release of SuperSlicer for Linux (non-AppImage) using the GitHub API
+# This was forked from https://github.com/dmagyar/prusaslicer-vnc-docker/blob/main/getLatestPrusaSlicerRelease.sh
+
+set -eu
+
+if [[ $# -lt 1 ]]; then
+  echo "~~~ $0 ~~~"
+  echo "	usage: $0 [ url | name | url_ver VERSION | name_ver VERSION_NAME ]"
+  echo
+  echo "	url: Returns the download URL for the latest release (for download using cURL/wget)"
+  echo "	name: Returns the filename of the latest release"
+  echo 
+  echo "	url_ver: Takes a parameter to specify the version to retrieve (note: some download urls have hex-encoded ascii characters)"
+  echo "	url_ver example: $0 url_ver 2.0.0%2B"
+  echo "	output: https://github.com/supermerill/SuperSlicer/releases/download/2.3.57.10/SuperSlicer_2.3.57.10_linux64_220203.tar.zip"
+  echo
+  echo "	name_ver: Takes a parameter to specify the filename to retrieve (note: this has a '+' added on at the end of the provided version number)"
+  echo "	name_ver example: $0 name_ver 2.0.0"
+  echo "	output: SuperSlicer_2.3.57.10_linux64_220203.tar.zip"
+  echo
+  exit 1
+fi
 
 TMPDIR="$(mktemp -d)"
 
