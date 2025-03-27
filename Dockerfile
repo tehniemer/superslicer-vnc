@@ -44,7 +44,7 @@ RUN chmod +x /slic3r/get_latest_superslicer_release.sh \
   && curl -sSL ${latestSlic3r} > ${slic3rReleaseName} \
   && rm -f /slic3r/releaseInfo.json \
   && chmod +x /slic3r/${slic3rReleaseName} \
-  && /slic3r/${slic3rReleaseName} --appimage-extract \
+  && tar -xzf ${slic3rReleaseName} -C /slic3r/${slic3rReleaseName} --strip-components 1 \
   && rm -f /slic3r/${slic3rReleaseName} \
   && rm -rf /var/lib/apt/lists/* \
   && apt-get autoclean \
