@@ -31,10 +31,8 @@ fi
 # Run from the git repository
 cd "$(dirname "$0")";
 
-# Fetch latest tags from remote
-git fetch --tags
-
 # Get the latest tag (by tag date, not commit) in our repository
+git fetch --tags
 LATEST_GIT_TAG=$(git for-each-ref refs/tags --sort=-creatordate --format='%(refname:short)' --count=1)
 
 if [[ "${LATEST_GIT_TAG}" != "${LATEST_VERSION}" ]]; then
