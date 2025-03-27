@@ -48,6 +48,7 @@ RUN chmod +x /slic3r/get_latest_superslicer_release.sh \
   && rm -f /slic3r/${slic3rReleaseName} \
   && rm -rf /var/lib/apt/lists/* \
   && apt-get autoclean \
+  && chmod -R 777 /slic3r/ \
   && groupadd slic3r \
   && useradd -g slic3r --create-home --home-dir /home/slic3r slic3r \
   && mkdir -p /slic3r \
