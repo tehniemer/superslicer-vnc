@@ -23,7 +23,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Ensures full history is fetched, including all tags
+          fetch-depth: 0  # Fetch full history for tags
 
       - name: Fetch all tags
         run: git fetch --tags
@@ -50,18 +50,22 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Build and push Docker image using the latest Git tag
+      # Build and push the versioned Docker image
       - name: Build and push versioned Docker image
         id: build-and-push
         uses: docker/build-push-action@v5
         with:
           context: .
-          push: true
+          push: ${{ github.event_name != 'pull_request' }}
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.GIT_TAG }}
 
-      # Optionally tag the latest version
-      - name: Tag and push latest if Git tag is the latest release
+      # Ensure the versioned image exists before tagging it as latest
+      - name: Pull the pushed image to ensure it's available
+        run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.GIT_TAG }}
+
+      # Tag and push latest
+      - name: Tag and push latest
         run: |
           docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.GIT_TAG }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
