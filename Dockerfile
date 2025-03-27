@@ -43,8 +43,8 @@ RUN chmod +x /slic3r/get_latest_superslicer_release.sh \
   && slic3rReleaseName=$(/slic3r/get_latest_superslicer_release.sh name) \
   && curl -sSL ${latestSlic3r} > ${slic3rReleaseName} \
   && rm -f /slic3r/releaseInfo.json \
-  && chmod +x /slic3r/${slic3rReleaseName} \
-  && tar -xzf ${slic3rReleaseName} -C /slic3r/${slic3rReleaseName} --strip-components 1 \
+  && mkdir -p /slic3r/slic3r-dist \
+  && tar -xzf ${slic3rReleaseName} -C /slic3r/slic3r-dist --strip-components 1 \
   && rm -f /slic3r/${slic3rReleaseName} \
   && rm -rf /var/lib/apt/lists/* \
   && apt-get autoclean \
