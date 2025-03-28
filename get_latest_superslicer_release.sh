@@ -46,20 +46,20 @@ fi
 
 if [[ "$1" == "url" ]]; then
 
-  echo "${releaseInfo}" | jq -r '.assets[] | .browser_download_url | select(test("SuperSlicer_.+(-\\w)?.linux64_(?!GTK3).+.tar.zip"))'
+  echo "${releaseInfo}" | jq -r '.assets[] | .browser_download_url | select(test("^SuperSlicer-ubuntu_\d{2}\.\d{2}(-(?!gtk3)\w+)?-\d+\.\d+\.\d+\.\d+\.AppImage$"))'
 
 elif [[ "$1" == "name" ]]; then
 
-  echo "${releaseInfo}" | jq -r '.assets[] | .name | select(test("SuperSlicer_.+(-\\w)?.linux64_(?!GTK3).+.tar.zip"))'
+  echo "${releaseInfo}" | jq -r '.assets[] | .name | select(test("^SuperSlicer-ubuntu_\d{2}\.\d{2}(-(?!gtk3)\w+)?-\d+\.\d+\.\d+\.\d+\.AppImage$"))'
 
 elif [[ "$1" == "url_ver" ]]; then
 
   # Note: Releases sometimes have hex-encoded ascii characters tacked on
   # So version '2.0.0+' might need to be requested as '2.0.0%2B' since GitHub returns that as the download URL
-  echo "${allReleases}" | jq --arg VERSION "$VER" -r '.[] | .assets[] | .browser_download_url | select(test("SuperSlicer_" + $VERSION + "linux64_.+.tar.zip"))'
+  echo "${allReleases}" | jq --arg VERSION "$VER" -r '.[] | .assets[] | .browser_download_url | select(test("^SuperSlicer-ubuntu_[0-9]{2}\.[0-9]{2}(-(?!gtk3)\w+)?-${VERSION}\.AppImage$"))'
 
 elif [[ "$1" == "name_ver" ]]; then
    
-  echo "${allReleases}" | jq --arg VERSION "$VER" -r '.[] | .assets[] | .name | select(test("SuperSlicer_" + $VERSION + "\\+linux64_.+.tar.zip"))'
+  echo "${allReleases}" | jq --arg VERSION "$VER" -r '.[] | .assets[] | .name | select(test("^SuperSlicer-ubuntu_[0-9]{2}\.[0-9]{2}(-(?!gtk3)\w+)?-${VERSION}\.AppImage$"))'
 
 fi

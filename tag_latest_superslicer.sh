@@ -10,13 +10,17 @@ set -eu
 # return codes to indicate whether or not continuing with the workflow is appropriate
 GH_ACTION="y"
 
-# LATEST_RELEASE -- where to find the latest SuperSlicer release
+# Where to find the SuperSlicer releases
 LATEST_RELEASE="https://api.github.com/repos/supermerill/SuperSlicer/releases/latest"
+
+ALL_RELEASES="https://api.github.com/repos/supermerill/SuperSlicer/releases"
 
 # ** end of configurable variables **
 
 # Get the latest tagged version
 LATEST_VERSION="$(curl -SsL ${LATEST_RELEASE} | jq -r '.tag_name | select(test("[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{1,2}\\-{0,1}(\\w+){0,1}$"))' | cut -d_ -f2)"
+
+RC_VERSION="$(curl -SsL ${ALL_RELEASES} | jq -r '[.[] | select(.prerelease == true and .target_commitish == "rc")][0].tag_name | select(test("^[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{1,2}(-\\w+)?$"))' | cut -d_ -f2)"
 
 if [[ -z "${LATEST_VERSION}" ]]; then
 
