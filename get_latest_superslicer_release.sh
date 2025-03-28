@@ -46,11 +46,11 @@ fi
 
 if [[ "$1" == "url" ]]; then
 
-  echo "${releaseInfo}" | jq -r '.assets[] | .browser_download_url | select(test("^SuperSlicer-ubuntu_\d{2}\.\d{2}(-(?!gtk3)\w+)?-\d+\.\d+\.\d+\.\d+\.AppImage$"))'
+  echo "${releaseInfo}" | jq -r '.assets[] | .browser_download_url | select(test("^SuperSlicer-ubuntu_[0-9]{2}\\.[0-9]{2}(-(?!gtk3)[a-zA-Z0-9_]+)?-[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{1,2}\\.AppImage$"))'
 
 elif [[ "$1" == "name" ]]; then
 
-  echo "${releaseInfo}" | jq -r '.assets[] | .name | select(test("^SuperSlicer-ubuntu_\d{2}\.\d{2}(-(?!gtk3)\w+)?-\d+\.\d+\.\d+\.\d+\.AppImage$"))'
+  echo "${releaseInfo}" | jq -r '.assets[] | .name | select(test("^SuperSlicer-ubuntu_[0-9]{2}\\.[0-9]{2}(-(?!gtk3)[a-zA-Z0-9_]+)?-[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{1,2}\\.AppImage$"))'
 
 elif [[ "$1" == "url_ver" ]]; then
 
