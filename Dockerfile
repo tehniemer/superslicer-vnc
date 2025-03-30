@@ -35,12 +35,12 @@ RUN wget -qO /tmp/virtualgl_${VIRTUALGL_VERSION}_amd64.deb https://packagecloud.
     && dpkg -i /tmp/turbovnc_${TURBOVNC_VERSION}_amd64.deb \
     && rm -rf /tmp/*.deb
 
-# Install Prusaslicer.
+# Install SuperSlicer.
 WORKDIR /slic3r
-ADD get_latest_prusaslicer_release.sh /slic3r
-RUN chmod +x /slic3r/get_latest_prusaslicer_release.sh \
-  && latestSlic3r=$(/slic3r/get_latest_prusaslicer_release.sh url) \
-  && slic3rReleaseName=$(/slic3r/get_latest_prusaslicer_release.sh name) \
+ADD get_latest_superslicer_release.sh /slic3r
+RUN chmod +x /slic3r/get_latest_superslicer_release.sh \
+  && latestSlic3r=$(/slic3r/get_latest_superslicer_release.sh url) \
+  && slic3rReleaseName=$(/slic3r/get_latest_superslicer_release.sh name) \
   && curl -sSL ${latestSlic3r} > ${slic3rReleaseName} \
   && rm -f /slic3r/releaseInfo.json \
   && chmod +x /slic3r/${slic3rReleaseName} \
@@ -74,19 +74,19 @@ ADD supervisord.conf /etc/
 
 # Add a default file to resize and redirect, and adjust icons for noVNC.
 ADD vncresize.html /usr/share/novnc/index.html
-ADD icons/prusaslicer-16x16.png /usr/share/novnc/app/images/icons/novnc-16x16.png
-ADD icons/prusaslicer-24x24.png /usr/share/novnc/app/images/icons/novnc-24x24.png
-ADD icons/prusaslicer-32x32.png /usr/share/novnc/app/images/icons/novnc-32x32.png
-ADD icons/prusaslicer-48x48.png /usr/share/novnc/app/images/icons/novnc-48x48.png
-ADD icons/prusaslicer-60x60.png /usr/share/novnc/app/images/icons/novnc-60x60.png
-ADD icons/prusaslicer-64x64.png /usr/share/novnc/app/images/icons/novnc-64x64.png
-ADD icons/prusaslicer-72x72.png /usr/share/novnc/app/images/icons/novnc-72x72.png
-ADD icons/prusaslicer-76x76.png /usr/share/novnc/app/images/icons/novnc-76x76.png
-ADD icons/prusaslicer-96x96.png /usr/share/novnc/app/images/icons/novnc-96x96.png
-ADD icons/prusaslicer-120x120.png /usr/share/novnc/app/images/icons/novnc-120x120.png
-ADD icons/prusaslicer-144x144.png /usr/share/novnc/app/images/icons/novnc-144x144.png
-ADD icons/prusaslicer-152x152.png /usr/share/novnc/app/images/icons/novnc-152x152.png
-ADD icons/prusaslicer-192x192.png /usr/share/novnc/app/images/icons/novnc-192x192.png
+ADD icons/superslicer-16x16.png /usr/share/novnc/app/images/icons/novnc-16x16.png
+ADD icons/superslicer-24x24.png /usr/share/novnc/app/images/icons/novnc-24x24.png
+ADD icons/superslicer-32x32.png /usr/share/novnc/app/images/icons/novnc-32x32.png
+ADD icons/superslicer-48x48.png /usr/share/novnc/app/images/icons/novnc-48x48.png
+ADD icons/superslicer-60x60.png /usr/share/novnc/app/images/icons/novnc-60x60.png
+ADD icons/superslicer-64x64.png /usr/share/novnc/app/images/icons/novnc-64x64.png
+ADD icons/superslicer-72x72.png /usr/share/novnc/app/images/icons/novnc-72x72.png
+ADD icons/superslicer-76x76.png /usr/share/novnc/app/images/icons/novnc-76x76.png
+ADD icons/superslicer-96x96.png /usr/share/novnc/app/images/icons/novnc-96x96.png
+ADD icons/superslicer-120x120.png /usr/share/novnc/app/images/icons/novnc-120x120.png
+ADD icons/superslicer-144x144.png /usr/share/novnc/app/images/icons/novnc-144x144.png
+ADD icons/superslicer-152x152.png /usr/share/novnc/app/images/icons/novnc-152x152.png
+ADD icons/superslicer-192x192.png /usr/share/novnc/app/images/icons/novnc-192x192.png
 
 # Set Firefox to run with hardware acceleration as if enabled.
 RUN sed -i 's|exec $MOZ_LIBDIR/$MOZ_APP_NAME "$@"|if [ -n "$ENABLEHWGPU" ] \&\& [ "$ENABLEHWGPU" = "true" ]; then\n  exec /usr/bin/vglrun $MOZ_LIBDIR/$MOZ_APP_NAME "$@"\nelse\n  exec $MOZ_LIBDIR/$MOZ_APP_NAME "$@"\nfi|g' /usr/bin/firefox-esr

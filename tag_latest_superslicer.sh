@@ -1,5 +1,5 @@
 #!/bin/bash
-# Push a tag for our repository if upstream PrusaSlicer generates a new release
+# Push a tag for our repository if upstream SuperSlicer generates a new release
 # This was forked from https://github.com/dmagyar/prusaslicer-vnc-docker/blob/main/tagLatestPrusaSlicer.sh
 
 set -eu
@@ -10,13 +10,13 @@ set -eu
 # return codes to indicate whether or not continuing with the workflow is appropriate
 GH_ACTION="y"
 
-# LATEST_RELEASE -- where to find the latest PrusaSlicer release
-LATEST_RELEASE="https://api.github.com/repos/prusa3d/PrusaSlicer/releases/latest"
+# LATEST_RELEASE -- where to find the latest SuperSlicer release
+LATEST_RELEASE="https://api.github.com/repos/supermerill/SuperSlicer/releases/latest"
 
 # ** end of configurable variables **
 
 # Get the latest tagged version
-LATEST_VERSION="$(curl -SsL ${LATEST_RELEASE} | jq -r '.tag_name | select(test("^version_[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{1,2}\\-{0,1}(\\w+){0,1}$"))' | cut -d_ -f2)"
+LATEST_VERSION="$(curl -SsL ${LATEST_RELEASE} | jq -r '.tag_name | select(test("[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{1,2}\\-{0,1}(\\w+){0,1}$"))' | cut -d_ -f2)"
 
 if [[ -z "${LATEST_VERSION}" ]]; then
 
@@ -32,6 +32,7 @@ fi
 cd "$(dirname "$0")";
 
 # Get the latest tag (by tag date, not commit) in our repository
+git fetch --tags
 LATEST_GIT_TAG=$(git for-each-ref refs/tags --sort=-creatordate --format='%(refname:short)' --count=1)
 
 if [[ "${LATEST_GIT_TAG}" != "${LATEST_VERSION}" ]]; then

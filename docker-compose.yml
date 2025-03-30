@@ -1,9 +1,9 @@
 ---
 version: "2.1"
 services:
-  prusaslicer-novnc:
-    image: mikeah/prusaslicer-novnc
-    container_name: prusaslicer-novnc
+  superslicer-novnc:
+    image: ghcr.io/tehniemer/superslicer-vnc
+    container_name: superslicer-vnc
     environment:
       - SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
       - NVIDIA_VISIBLE_DEVICES=0

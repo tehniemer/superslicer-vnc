@@ -1,8 +1,8 @@
 ---
 version: "2.1"
 services:
-  prusaslicer-novnc:
-    image: mikeah/prusaslicer-novnc
+  superslicer-novnc:
+    image: ghcr.io/tehniemer/superslicer-vnc
     build: .
     environment:
       - SSL_CERT_FILE="/etc/ssl/certs/ca-certificates.crt"
