@@ -1,4 +1,4 @@
-name: Publish to ghcr.io
+name: Publish prerelase to ghcr.io
 
 on:
   workflow_dispatch:
@@ -56,7 +56,7 @@ jobs:
       - name: Pull the pushed image to ensure it's available
         run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }}
 
-      - name: Tag and push latest
+      - name: Tag and push prerelease
         run: |
           docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:prerelease

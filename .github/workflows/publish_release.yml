@@ -1,4 +1,4 @@
-name: Publish to ghcr.io
+name: Publish latest release to ghcr.io
 
 on:
   workflow_dispatch:
