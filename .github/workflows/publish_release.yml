@@ -42,26 +42,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Remove previous latest tag if exists
-        continue-on-error: true
-        run: |
-          # Check if latest tag exists
-          if skopeo inspect docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest > /dev/null 2>&1; then
-            echo "Latest tag exists. Deleting..."
-            gh api --method DELETE "/user/packages/container/${{ env.IMAGE_NAME }}/versions" \
-              -H "Accept: application/vnd.github.v3+json" \
-              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              --silent
-          else
-            echo "No existing latest tag found. Skipping delete."
-          fi
-
       - name: Build and push versioned and latest Docker images
         id: build-and-push
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./dockerfile/release
+          push: true
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }}
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
