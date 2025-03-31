@@ -2,9 +2,6 @@ name: Publish to ghcr.io
 
 on:
   workflow_dispatch:
-  push:
-    # Publish semver tags as releases.
-    tags: [ '*' ]
 
 env:
   REGISTRY: ghcr.io
@@ -50,9 +47,9 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ./dockerfile/release
           push: ${{ github.event_name != 'pull_request' }}
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }}
 
       - name: Pull the pushed image to ensure it's available
         run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }}

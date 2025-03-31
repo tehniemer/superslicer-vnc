@@ -1,8 +1,8 @@
-# Prusaslicer noVNC Docker Container
+# SuperSlicer VNC Docker Container
 
 ## Overview
 
-This is a super basic noVNC build using supervisor to serve Prusaslicer in your favorite web browser. This was primarily built for users using the [popular unraid NAS software](https://unraid.net), to allow them to quickly hop in a browser, slice, and upload their favorite 3D prints.
+This is a super basic noVNC build using supervisor to serve SuperSlicer in your favorite web browser. This was primarily built for users using the [popular unraid NAS software](https://unraid.net), to allow them to quickly hop in a browser, slice, and upload their favorite 3D prints.
 
 A lot of this was branched off of dmagyar's awesome [prusaslicer-vnc-docker](https://hub.docker.com/r/dmagyar/prusaslicer-vnc-docker/) project, but I found it to be a bit complex for my needs and thought this approach would simplify things a lot.
 
@@ -10,15 +10,15 @@ A lot of this was branched off of dmagyar's awesome [prusaslicer-vnc-docker](htt
 
 ### In unraid
 
-If you're using unraid, open your Docker page and under `Template repositories`, add `https://github.com/helfrichmichael/unraid-templates` and save it. You should then be able to Add Container for prusaslicer-novnc. For unraid, the template will default to 6080 for the noVNC web instance.
+If you're using unraid, open your Docker page and under `Template repositories`, add `https://github.com/helfrichmichael/unraid-templates` and save it. You should then be able to Add Container for superslicer-novnc. For unraid, the template will default to 6080 for the noVNC web instance.
 
 ### Outside of unraid
 
 #### Docker
-To run this image, you can run the following command: `docker run --detach --volume=prusaslicer-novnc-data:/configs/ --volume=prusaslicer-novnc-prints:/prints/ -p 8080:8080 -e SSL_CERT_FILE="/etc/ssl/certs/ca-certificates.crt" 
---name=prusaslicer-novnc mikeah/prusaslicer-novnc`
+To run this image, you can run the following command: `docker run --detach --volume=superslicer-vnc-data:/configs/ --volume=superslicer-vnc-prints:/prints/ -p 8080:8080 -e SSL_CERT_FILE="/etc/ssl/certs/ca-certificates.crt" 
+--name=superslicer-vnc ghcr.io/tehniemer/superslicer-vnc`
 
-This will bind `/configs/` in the container to a local volume on my machine named `prusaslicer-novnc-data`. Additionally it will bind `/prints/` in the container to `superslicer-novnc-prints` locally on my machine, it will bind port `8080` to `8080`, and finally, it will provide an environment variable to keep Prusaslicer happy by providing an `SSL_CERT_FILE`.
+This will bind `/configs/` in the container to a local volume on my machine named `superslicer-vnc-data`. Additionally it will bind `/prints/` in the container to `superslicer-vnc-prints` locally on my machine, it will bind port `8080` to `8080`, and finally, it will provide an environment variable to keep SuperSlicer happy by providing an `SSL_CERT_FILE`.
 
 #### Docker Compose
 To use the pre-built image, simply clone this repository or copy `docker-compose.yml` and run `docker compose up -d`.
@@ -79,16 +79,10 @@ Below are the default values for various environment variables:
 
 ## Links
 
-[Prusaslicer](https://www.prusa3d.com/prusaslicer/)
+[SuperSlicer](https://www.superslicer.org/)
 
-[TruboVNC](https://www.turbovnc.org/)
+[TurboVNC](https://www.turbovnc.org/)
 
 [VirtualGL](https://virtualgl.org/)
 
 [Supervisor](http://supervisord.org/)
-
-[GitHub Source](https://github.com/helfrichmichael/prusaslicer-novnc)
-
-[Docker](https://hub.docker.com/r/mikeah/prusaslicer-novnc)
-
-<a href="https://www.buymeacoffee.com/helfrichmichael" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
