@@ -44,19 +44,32 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push versioned Docker image
+      - name: Remove previous prerelease tag if exists
+        continue-on-error: true
+        run: |
+          # Check if prerelease tag exists
+          if skopeo inspect docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:prerelease > /dev/null 2>&1; then
+            echo "Prerelease tag exists. Deleting..."
+            gh api --method DELETE "/user/packages/container/${{ env.IMAGE_NAME }}/versions" \
+              -H "Accept: application/vnd.github.v3+json" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              --silent
+          else
+            echo "No existing prerelease tag found. Skipping delete."
+          fi
+
+      - name: Build and push versioned and prerelease Docker images
         id: build-and-push
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./dockerfile/prerelease
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.PRERELEASE_TAG }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.PRERELEASE_TAG }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:prerelease
 
-      - name: Pull the pushed image to ensure it's available
-        run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.PRERELEASE_TAG }}
-
-      - name: Tag and push prerelease
+      - name: Verify pushed images
         run: |
-          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.PRERELEASE_TAG }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:prerelease
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:prerelease
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.PRERELEASE_TAG }}
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:prerelease
