@@ -21,7 +21,7 @@ jobs:
         with:
           fetch-depth: 0  # Fetch full history for tags
 
-      - name: Fetch latest release tag from GitHub API
+      - name: Fetch latest prerelease tag from GitHub API
         run: |
           PRERELEASE_TAG=$(curl -s https://api.github.com/repos/supermerill/SuperSlicer/releases | \
           jq -r '[.[] | select(.target_commitish == "rc" and .prerelease == true)][0].tag_name')
