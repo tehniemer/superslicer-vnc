@@ -10,10 +10,12 @@ set -eu
 LATEST_RELEASE="https://api.github.com/repos/supermerill/SuperSlicer/releases/latest"
 ALL_RELEASES="https://api.github.com/repos/supermerill/SuperSlicer/releases"
 
+# name 
+PKG_NAME="superslicer-vnc"
+
 # ** end of configurable variables **
 
 # Get the latest tagged version from the SuperSlicer repo
-
 TMPDIR="$(mktemp -d)"
 
 curl -SsL ${LATEST_RELEASE} > $TMPDIR/latest.json
@@ -35,12 +37,13 @@ fi
 cd "$(dirname "$0")";
 
 # Fetch all package tags
-gh api -H "Accept: application/vnd.github.v3+json" \
-    /user/packages/container/superslicer-vnc/versions | jq -c '.[].metadata.container.tags' > $TMPDIR/containertags.json
+gh api -H "Accept: application/vnd.github.v3+json" /user/packages/container/${PKG_NAME}/versions > $TMPDIR/packages.json
+
+tags=$(jq -c '.[] | .metadata.container.tags' $TMPDIR/packages.json) 
 
 # Get the version numbers of the published packages
-LATEST_PKG_TAG=$(jq -r 'map(select(.[0] == "latest")) | .[0][1]' $TMPDIR/containertags.json)
-PRERELEASE_PKG_TAG=$(jq -r 'map(select(.[0] == "prerelease")) | .[0][1]' $TMPDIR/containertags.json)
+LATEST_PKG_TAG=$(echo "$tags" | jq -r 'map(select(.[0] == "latest")) | .[0][1]')
+PRERELEASE_PKG_TAG=$(echo "$tags" | jq -r 'map(select(.[0] == "prerelease")) | .[0][1]')
 
 if [[ -z "${LATEST_PKG_TAG}" || -z "${PRERELEASE_PKG_TAG}" ]]; then
   echo "Could not determine package version number(s)."
