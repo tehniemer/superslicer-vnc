@@ -1,0 +1,21 @@
+name: Check for new SuperSlicer tags
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *" # Every night at Midnight.=
+  
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: sergeysova/jq-action@v2 # Needed for parsing the JSON of the Superslicer releases.
+      - name: checkout repo content
+        uses: actions/checkout@v2 # Checkout the repository content to GitHub's runner.
+      - name: Tag the latest Superslicer if available
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          chmod +x ./check_superslicer_tags.sh
+          ./check_superslicer_tags.sh

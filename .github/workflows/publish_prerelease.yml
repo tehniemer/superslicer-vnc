@@ -23,15 +23,13 @@ jobs:
 
       - name: Fetch latest prerelease tag from GitHub API
         run: |
-          PRERELEASE_TAG=$(curl -s https://api.github.com/repos/supermerill/SuperSlicer/releases | \
-          jq -r '[.[] | select(.target_commitish == "rc" and .prerelease == true)][0].tag_name')
+          echo "PRERELEASE_TAG=$(curl -s https://api.github.com/repos/supermerill/SuperSlicer/releases | \
+          jq -r '[.[] | select(.target_commitish == "rc" and .prerelease == true)][0].tag_name')" >> $GITHUB_ENV
           
           if [ -z "$PRERELEASE_TAG" ] || [ "$PRERELEASE_TAG" == "null" ]; then
             echo "ERROR: No valid prerelease tag found!"
             exit 1
           fi
-          
-          echo "PRERELEASE_TAG=$PRERELEASE_TAG" >> $GITHUB_ENV
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
