@@ -33,10 +33,8 @@ fi
 
 # Run from the local git repository
 cd "$(dirname "$0")";
-gh repo set-default "${GITHUB_REPO}"
 
 # Fetch all package tags
-gh auth login --with-token <<< "$GITHUB_TOKEN"
 gh api -H "Accept: application/vnd.github.v3+json" \
     /user/packages/container/superslicer-vnc/versions | jq -c '.[].metadata.container.tags' > $TMPDIR/containertags.json
 
