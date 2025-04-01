@@ -54,6 +54,9 @@ fi
 
 # Function to compare version numbers
 version_greater() {
+  if [[ "$1" == "$2" ]]; then
+    return 1 # Return false if versions are equal
+  fi
   [[ "$(printf '%s\n' "$@" | sort -V | tail -n 1)" == "$1" ]]
 }
 
