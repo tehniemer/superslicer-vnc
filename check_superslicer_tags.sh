@@ -13,8 +13,17 @@ ALL_RELEASES="https://api.github.com/repos/supermerill/SuperSlicer/releases"
 # ** end of configurable variables **
 
 # Get the latest tagged version from the SuperSlicer repo
-LATEST_VERSION="$(curl -SsL ${LATEST_RELEASE} | jq -r '.tag_name')"
-PRERELEASE_VERSION="$(curl -SsL ${ALL_RELEASES} | jq -r '[.[] | select(.target_commitish == "rc" and .prerelease == true)] | sort_by(.created_at) | reverse | .[0].tag_name')"
+
+TMPDIR="$(mktemp -d)"
+
+curl -SsL ${LATEST_RELEASE} > $TMPDIR/latest.json
+curl -SsL  ${ALL_RELEASES} > $TMPDIR/allreleases.json
+
+# Filter the release that has both "target_commitish": "rc" and "prerelease": true
+release=$(jq -c '.[] | select(.target_commitish == "rc" and .prerelease == true)' $TMPDIR/allreleases.json)
+
+LATEST_VERSION=$(jq -r .tag_name $TMPDIR/latest.json)
+PRERELEASE_VERSION=version=$(echo "$release" | jq -r '.tag_name')
 
 if [[ -z "${LATEST_VERSION}" || -z "${PRERELEASE_VERSION}" ]]; then
   echo "Could not determine version number(s)."
