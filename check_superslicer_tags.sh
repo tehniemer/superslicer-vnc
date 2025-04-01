@@ -23,7 +23,7 @@ curl -SsL  ${ALL_RELEASES} > $TMPDIR/allreleases.json
 release=$(jq -c '.[] | select(.target_commitish == "rc" and .prerelease == true)' $TMPDIR/allreleases.json)
 
 LATEST_VERSION=$(jq -r .tag_name $TMPDIR/latest.json)
-PRERELEASE_VERSION=version=$(echo "$release" | jq -r '.tag_name')
+PRERELEASE_VERSION=$(echo "$release" | jq -r '.tag_name')
 
 if [[ -z "${LATEST_VERSION}" || -z "${PRERELEASE_VERSION}" ]]; then
   echo "Could not determine version number(s)."
