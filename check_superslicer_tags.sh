@@ -26,22 +26,29 @@ LATEST_VERSION=$(jq -r .tag_name $TMPDIR/latest.json)
 PRERELEASE_VERSION=$(echo "$release" | jq -r '.tag_name')
 
 if [[ -z "${LATEST_VERSION}" || -z "${PRERELEASE_VERSION}" ]]; then
-  echo "Could not determine version number(s)."
+  echo "Could not determine SuperSlicer version number(s)."
   echo "Has release naming changed from previous conventions?"
   exit 1
 fi
 
-# Run from the git repository
+# Run from the local git repository
 cd "$(dirname "$0")";
+gh repo set-default "${GITHUB_REPO}"
 
-# Fetch all package tags (not just release tags)
-git fetch --tags
+# Fetch all package tags
+gh auth login --with-token <<< "$GITHUB_TOKEN"
+gh api -H "Accept: application/vnd.github.v3+json" \
+    /user/packages/container/superslicer-vnc/versions | jq -c '.[].metadata.container.tags' > $TMPDIR/containertags.json
 
-# Get the latest package tag (sorted by creation date)
-LATEST_PKG_TAG=$(git tag --sort=-creatordate | grep -E "latest" | head -n 1 || echo "")
+# Get the version numbers of the published packages
+LATEST_PKG_TAG=$(jq -r 'map(select(.[0] == "latest")) | .[0][1]' $TMPDIR/containertags.json)
+PRERELEASE_PKG_TAG=$(jq -r 'map(select(.[0] == "prerelease")) | .[0][1]' $TMPDIR/containertags.json)
 
-# Get the latest prerelease package tag (matching 'rc' or prerelease pattern)
-PRERELEASE_PKG_TAG=$(git tag --sort=-creatordate | grep -E "prerelease" | head -n 1 || echo "")
+if [[ -z "${LATEST_PKG_TAG}" || -z "${PRERELEASE_PKG_TAG}" ]]; then
+  echo "Could not determine package version number(s)."
+  echo "Has tag naming changed from previous conventions?"
+  exit 1
+fi
 
 # Function to compare version numbers
 version_greater() {
@@ -49,7 +56,7 @@ version_greater() {
 }
 
 # Check if the latest release version is greater than the local latest package tag
-if [[ -n "$LATEST_VERSION" && -n "$LATEST_PKG_TAG" && version_greater "$LATEST_VERSION" "$LATEST_PKG_TAG" ]]; then
+if version_greater "$LATEST_VERSION" "$LATEST_PKG_TAG"; then
   echo "New stable release found! Updating latest package from ${LATEST_PKG_TAG} to ${LATEST_VERSION}"
   gh workflow run publish_release.yml
 else
@@ -57,7 +64,7 @@ else
 fi
 
 # Check if the latest prerelease version is greater than the local prerelease package tag
-if [[ -n "$PRERELEASE_VERSION" && -n "$PRERELEASE_PKG_TAG" && version_greater "$PRERELEASE_VERSION" "$PRERELEASE_PKG_TAG" ]]; then
+if version_greater "$PRERELEASE_VERSION" "$PRERELEASE_PKG_TAG"; then
   echo "New prerelease found! Updating prerelease package from ${PRERELEASE_PKG_TAG} to ${PRERELEASE_VERSION}"
   gh workflow run publish_prerelease.yml
 else
