@@ -39,7 +39,8 @@ cd "$(dirname "$0")";
 # Fetch all package tags
 gh api -H "Accept: application/vnd.github.v3+json" /user/packages/container/${PKG_NAME}/versions > $TMPDIR/packages.json
 
-tags=$(jq -c '.[] | .metadata.container.tags' $TMPDIR/packages.json) 
+# Parse the tags as a JSON array
+tags=$(jq -c '.[] | .metadata.container.tags' $TMPDIR/packages.json | jq -s '.')
 
 # Get the version numbers of the published packages
 LATEST_PKG_TAG=$(echo "$tags" | jq -r 'map(select(.[0] == "latest")) | .[0][1]')
