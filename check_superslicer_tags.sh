@@ -42,8 +42,8 @@ gh api -H "Accept: application/vnd.github.v3+json" /user/packages/container/${PK
 tags=$(jq -c '.[] | .metadata.container.tags' $TMPDIR/packages.json | jq -s '.')
 
 # Get the version numbers of the published packages
-LATEST_PKG_TAG=$(echo "$tags" | jq -r 'map(select(.[0] == "latest")) | .[0][1]')
-PRERELEASE_PKG_TAG=$(echo "$tags" | jq -r 'map(select(.[0] == "prerelease")) | .[0][1]')
+LATEST_PKG_TAG=$(echo "$tags" | jq -r 'map(select(index("latest") != null)) | .[0] | if .[0] == "latest" then .[1] else .[0] end')
+PRERELEASE_PKG_TAG=$(echo "$tags" | jq -r 'map(select(index("prerelease") != null)) | .[0] | if .[0] == "prerelease" then .[1] else .[0] end')
 
 if [[ -z "${LATEST_PKG_TAG}" || -z "${PRERELEASE_PKG_TAG}" ]]; then
   echo "Could not determine package version number(s)."
