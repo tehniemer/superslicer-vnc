@@ -1,6 +1,5 @@
 #!/bin/bash
-# Push a tag for our repository if upstream SuperSlicer generates a new release
-# This was forked from https://github.com/dmagyar/prusaslicer-vnc-docker/blob/main/tagLatestPrusaSlicer.sh
+# Trigger publishing a new package if SuperSlicer generates a new pre-release or release
 
 set -eu
 
@@ -10,7 +9,7 @@ set -eu
 LATEST_RELEASE="https://api.github.com/repos/supermerill/SuperSlicer/releases/latest"
 ALL_RELEASES="https://api.github.com/repos/supermerill/SuperSlicer/releases"
 
-# name 
+# Local repo name 
 PKG_NAME="superslicer-vnc"
 
 # ** end of configurable variables **
@@ -21,8 +20,8 @@ TMPDIR="$(mktemp -d)"
 curl -SsL ${LATEST_RELEASE} > $TMPDIR/latest.json
 curl -SsL  ${ALL_RELEASES} > $TMPDIR/allreleases.json
 
-# Filter the release that has both "target_commitish": "rc" and "prerelease": true
-release=$(jq -c '.[] | select(.target_commitish == "rc" and .prerelease == true)' $TMPDIR/allreleases.json)
+# Filter the release that has "prerelease": true
+release=$(jq -c '.[] | select(.prerelease == true)' $TMPDIR/allreleases.json)
 
 LATEST_VERSION=$(jq -r .tag_name $TMPDIR/latest.json)
 PRERELEASE_VERSION=$(echo "$release" | jq -r '.tag_name')
@@ -52,12 +51,12 @@ if [[ -z "${LATEST_PKG_TAG}" || -z "${PRERELEASE_PKG_TAG}" ]]; then
   exit 1
 fi
 
-# Function to compare version numbers
+# Function to compare version numbers: returns true only if $1 > $2
 version_greater() {
   if [[ "$1" == "$2" ]]; then
-    return 1 # Return false if versions are equal
+    return 1
   fi
-  [[ "$(printf '%s\n' "$@" | sort -V | tail -n 1)" == "$1" ]]
+  [[ "$(printf '%s\n' "$1" "$2" | sort -V | head -n 1)" != "$1" ]]
 }
 
 # Check if the latest release version is greater than the local latest package tag
@@ -68,12 +67,12 @@ else
   echo "No new stable release detected."
 fi
 
-# Check if the latest prerelease version is greater than the local prerelease package tag
+# Check if the latest pre-release version is greater than the local pre-release package tag
 if version_greater "$PRERELEASE_VERSION" "$PRERELEASE_PKG_TAG"; then
-  echo "New prerelease found! Updating prerelease package from ${PRERELEASE_PKG_TAG} to ${PRERELEASE_VERSION}"
+  echo "New pre-release found! Updating pre-release package from ${PRERELEASE_PKG_TAG} to ${PRERELEASE_VERSION}"
   gh workflow run publish_prerelease.yml
 else
-  echo "No new prerelease detected."
+  echo "No new pre-release detected."
 fi
 
 exit 0
