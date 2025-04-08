@@ -24,7 +24,7 @@ jobs:
       - name: Fetch latest prerelease tag from GitHub API
         run: |
           PRERELEASE_TAG=$(curl -s https://api.github.com/repos/supermerill/SuperSlicer/releases | \
-          jq -r '[.[] | select(.target_commitish == "rc" and .prerelease == true)][0].tag_name')
+          jq -r '[.[] | select(.prerelease == true)][0].tag_name')
           
           if [ -z "$PRERELEASE_TAG" ] || [ "$PRERELEASE_TAG" == "null" ]; then
             echo "ERROR: No valid prerelease tag found!"
