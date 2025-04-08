@@ -24,7 +24,7 @@ curl -SsL  ${ALL_RELEASES} > $TMPDIR/allreleases.json
 release=$(jq -c '.[] | select(.prerelease == true)' $TMPDIR/allreleases.json)
 
 LATEST_VERSION=$(jq -r .tag_name $TMPDIR/latest.json)
-PRERELEASE_VERSION=$(echo "$release" | jq -r '.tag_name')
+PRERELEASE_VERSION=$(echo "$release" | jq -r '.tag_name' | head -n 1)
 
 if [[ -z "${LATEST_VERSION}" || -z "${PRERELEASE_VERSION}" ]]; then
   echo "Could not determine SuperSlicer version number(s)."
