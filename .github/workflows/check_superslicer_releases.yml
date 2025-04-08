@@ -1,4 +1,4 @@
-name: Check for new SuperSlicer tags
+name: Check for new SuperSlicer releases
 
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ jobs:
       - uses: sergeysova/jq-action@v2 # Needed for parsing the JSON of the Superslicer releases.
       - name: checkout repo content
         uses: actions/checkout@v2 # Checkout the repository content to GitHub's runner.
-      - name: Tag the latest Superslicer if available
+      - name: Check for newer tags
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
