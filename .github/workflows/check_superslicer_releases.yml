@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: sergeysova/jq-action@v2 # Needed for parsing the JSON of the Superslicer releases.
       - name: checkout repo content
-        uses: actions/checkout@v2 # Checkout the repository content to GitHub's runner.
+        uses: actions/checkout@v6 # Checkout the repository content to GitHub's runner.
       - name: Check for newer tags
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
